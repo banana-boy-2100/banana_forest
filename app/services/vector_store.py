@@ -1,8 +1,9 @@
+from __future__ import annotations
 import chromadb
 from chromadb.config import Settings as ChromaSettings
 from app.core.config import settings
 
-_client: chromadb.Client | None = None
+_client: chromadb.ClientAPI | None = None
 COLLECTION_NAME = "sales_knowledge"
 
 
