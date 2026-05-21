@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>営業暗黙知 AI ツール</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --surface: #f8fafc;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --success: #16a34a;
+      --danger: #dc2626;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--surface); color: var(--text); min-height: 100vh; }
+
+    header { background: var(--primary); color: #fff; padding: 1rem 2rem; display: flex; align-items: center; gap: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,.15); }
+    header h1 { font-size: 1.25rem; font-weight: 700; }
+    header p { font-size: .85rem; opacity: .8; }
+
+    nav { display: flex; gap: .5rem; padding: 1rem 2rem; background: var(--card); border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+    nav button { padding: .5rem 1.25rem; border: 1px solid var(--border); border-radius: 6px; background: var(--card); cursor: pointer; font-size: .9rem; transition: all .15s; }
+    nav button:hover { background: var(--surface); }
+    nav button.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    main { max-width: 960px; margin: 2rem auto; padding: 0 1.5rem 4rem; }
+
+    .section { display: none; }
+    .section.visible { display: block; }
+
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; }
+    .card h2 { font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; }
+
+    .form-group { margin-bottom: 1rem; }
+    label { display: block; font-size: .875rem; font-weight: 500; margin-bottom: .375rem; color: var(--text-muted); }
+    input[type=text], textarea, select { width: 100%; padding: .625rem .875rem; border: 1px solid var(--border); border-radius: 6px; font-size: .9rem; font-family: inherit; }
+    textarea { resize: vertical; min-height: 100px; }
+    input:focus, textarea:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
+
+    .btn { padding: .625rem 1.25rem; border: none; border-radius: 6px; font-size: .9rem; font-weight: 500; cursor: pointer; transition: background .15s; }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-danger { background: var(--danger); color: #fff; }
+    .btn-sm { padding: .375rem .75rem; font-size: .8rem; }
+
+    .chat-area { height: 400px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; padding: 1rem; display: flex; flex-direction: column; gap: .75rem; background: var(--surface); margin-bottom: 1rem; }
+    .msg { max-width: 80%; padding: .75rem 1rem; border-radius: 12px; font-size: .9rem; line-height: 1.5; }
+    .msg.ai { background: #fff; border: 1px solid var(--border); align-self: flex-start; }
+    .msg.user { background: var(--primary); color: #fff; align-self: flex-end; }
+    .msg-input-row { display: flex; gap: .75rem; }
+    .msg-input-row input { flex: 1; }
+
+    .knowledge-grid { display: grid; gap: 1rem; }
+    .knowledge-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; }
+    .knowledge-card .cat { display: inline-block; font-size: .75rem; padding: .2rem .6rem; border-radius: 20px; background: #dbeafe; color: #1d4ed8; margin-bottom: .5rem; }
+    .knowledge-card h3 { font-size: .95rem; font-weight: 600; margin-bottom: .5rem; }
+    .knowledge-card p { font-size: .85rem; color: var(--text-muted); line-height: 1.5; }
+    .knowledge-card .tags { margin-top: .5rem; display: flex; flex-wrap: wrap; gap: .375rem; }
+    .tag { font-size: .75rem; padding: .15rem .5rem; background: #f1f5f9; border-radius: 12px; color: var(--text-muted); }
+
+    .playbook-content { white-space: pre-wrap; font-size: .88rem; line-height: 1.7; background: var(--surface); padding: 1rem; border-radius: 8px; border: 1px solid var(--border); max-height: 500px; overflow-y: auto; }
+
+    .stats-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+    .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; text-align: center; }
+    .stat-card .num { font-size: 2rem; font-weight: 700; color: var(--primary); }
+    .stat-card .label { font-size: .75rem; color: var(--text-muted); margin-top: .25rem; }
+
+    .alert { padding: .75rem 1rem; border-radius: 6px; margin-bottom: 1rem; font-size: .875rem; }
+    .alert-success { background: #dcfce7; color: #16a34a; }
+    .alert-error { background: #fee2e2; color: #dc2626; }
+
+    .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid #fff; border-top-color: transparent; border-radius: 50%; animation: spin .6s linear infinite; vertical-align: middle; margin-right: .5rem; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .search-row { display: flex; gap: .75rem; margin-bottom: 1rem; }
+    .search-row input { flex: 1; }
+
+    .cat-label { font-size: .8rem; }
+    .CAT_LABELS { display: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>営業暗黙知 AI ツール</h1>
+    <p>Sales Knowledge Formalization Platform</p>
+  </div>
+</header>
+
+<nav>
+  <button class="active" onclick="showSection('dashboard')">ダッシュボード</button>
+  <button onclick="showSection('interview')">AIインタビュー</button>
+  <button onclick="showSection('ingest')">ナレッジ取込</button>
+  <button onclick="showSection('search')">ナレッジ検索</button>
+  <button onclick="showSection('playbook')">プレイブック</button>
+  <button onclick="showSection('realtime')">商談サポート</button>
+</nav>
+
+<main>
+
+  <!-- ダッシュボード -->
+  <div id="sec-dashboard" class="section visible">
+    <div class="stats-row" id="stats-row">
+      <div class="stat-card"><div class="num" id="stat-total">-</div><div class="label">総ナレッジ数</div></div>
+    </div>
+    <div class="card">
+      <h2>カテゴリ別ナレッジ</h2>
+      <div id="cat-stats" style="display:grid;gap:.5rem;"></div>
+    </div>
+  </div>
+
+  <!-- AIインタビュー -->
+  <div id="sec-interview" class="section">
+    <div class="card" id="interview-start-card">
+      <h2>インタビューを開始する</h2>
+      <div class="form-group">
+        <label>担当者名</label>
+        <input type="text" id="interviewee-name" placeholder="例: 田中 太郎" />
+      </div>
+      <div class="form-group">
+        <label>テーマ（任意）</label>
+        <input type="text" id="interview-topic" placeholder="例: 大企業向けクロージング、反論処理など" />
+      </div>
+      <button class="btn btn-primary" onclick="startInterview()">インタビュー開始</button>
+    </div>
+
+    <div class="card" id="interview-chat-card" style="display:none;">
+      <h2 id="interview-title">インタビュー中...</h2>
+      <div class="chat-area" id="chat-area"></div>
+      <div class="msg-input-row">
+        <input type="text" id="chat-input" placeholder="メッセージを入力..." onkeydown="if(event.key==='Enter')sendMessage()" />
+        <button class="btn btn-primary" onclick="sendMessage()">送信</button>
+        <button class="btn" onclick="finalizeInterview()" style="background:#f59e0b;color:#fff;">完了・形式知化</button>
+      </div>
+      <div id="finalize-result" style="margin-top:1rem;"></div>
+    </div>
+  </div>
+
+  <!-- ナレッジ取込 -->
+  <div id="sec-ingest" class="section">
+    <div class="card">
+      <h2>ファイルアップロード（商談メモ・議事録）</h2>
+      <div class="form-group">
+        <label>テキストファイル (.txt, .md)</label>
+        <input type="file" id="upload-file" accept=".txt,.md,.csv" />
+      </div>
+      <div class="form-group">
+        <label>ソースヒント（任意）</label>
+        <input type="text" id="upload-hint" placeholder="例: 2024年Q4 エンタープライズ商談メモ" />
+      </div>
+      <button class="btn btn-primary" onclick="uploadDocument()">アップロード・抽出</button>
+      <div id="upload-result" style="margin-top:1rem;"></div>
+    </div>
+
+    <div class="card">
+      <h2>テキスト直接入力</h2>
+      <div class="form-group">
+        <label>ソース種別</label>
+        <select id="text-source-type">
+          <option value="document">商談メモ・議事録</option>
+          <option value="audio">音声文字起こし</option>
+          <option value="chat">Slack/チャットログ</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>ソース名</label>
+        <input type="text" id="text-source-name" placeholder="例: 2024-11 ABC商事商談" />
+      </div>
+      <div class="form-group">
+        <label>テキスト</label>
+        <textarea id="ingest-text" rows="8" placeholder="ここにテキストを貼り付けてください..."></textarea>
+      </div>
+      <button class="btn btn-primary" onclick="ingestText()">ナレッジを抽出・登録</button>
+      <div id="text-result" style="margin-top:1rem;"></div>
+    </div>
+  </div>
+
+  <!-- ナレッジ検索 -->
+  <div id="sec-search" class="section">
+    <div class="card">
+      <h2>ナレッジ検索</h2>
+      <div class="search-row">
+        <input type="text" id="search-query" placeholder="例: 価格交渉の断り方、初回アポの取り方..." onkeydown="if(event.key==='Enter')searchKnowledge()" />
+        <select id="search-cat" style="width:180px;">
+          <option value="">全カテゴリ</option>
+          <option value="objection_handling">反論処理</option>
+          <option value="rapport_building">関係構築</option>
+          <option value="needs_discovery">ニーズ発掘</option>
+          <option value="closing">クロージング</option>
+          <option value="product_knowledge">製品知識</option>
+          <option value="competitor_info">競合情報</option>
+          <option value="process">プロセス</option>
+          <option value="other">その他</option>
+        </select>
+        <button class="btn btn-primary" onclick="searchKnowledge()">検索</button>
+      </div>
+      <div class="knowledge-grid" id="search-results"></div>
+    </div>
+
+    <div class="card">
+      <h2>全ナレッジ一覧</h2>
+      <div class="knowledge-grid" id="knowledge-list"></div>
+    </div>
+  </div>
+
+  <!-- プレイブック -->
+  <div id="sec-playbook" class="section">
+    <div class="card">
+      <h2>プレイブック生成</h2>
+      <div class="form-group">
+        <label>シナリオ</label>
+        <input type="text" id="pb-scenario" placeholder="例: 競合他社と比較されて価格が高いと言われた場合の対処法" />
+      </div>
+      <div class="form-group">
+        <label>タイトル（任意）</label>
+        <input type="text" id="pb-title" placeholder="省略した場合は自動生成" />
+      </div>
+      <button class="btn btn-primary" onclick="generatePlaybook()">プレイブックを生成</button>
+      <div id="pb-result" style="margin-top:1.5rem;"></div>
+    </div>
+
+    <div class="card">
+      <h2>保存済みプレイブック</h2>
+      <div id="pb-list"></div>
+    </div>
+  </div>
+
+  <!-- 商談サポート -->
+  <div id="sec-realtime" class="section">
+    <div class="card">
+      <h2>商談リアルタイムサポート</h2>
+      <p style="font-size:.875rem;color:var(--text-muted);margin-bottom:1rem;">現在の商談状況を入力すると、蓄積ナレッジを元にすぐ使えるアドバイスを提供します。</p>
+      <div class="form-group">
+        <label>商談の状況</label>
+        <textarea id="rt-situation" rows="5" placeholder="例: 顧客が「予算がない」と言って断ろうとしている。まだニーズはありそうだが、決断を避けている様子。競合のAシステムを使っていると言っている。"></textarea>
+      </div>
+      <button class="btn btn-primary" onclick="getRealtimeSuggestion()">アドバイスを取得</button>
+      <div id="rt-result" style="margin-top:1.5rem;"></div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+const API = '';
+const CAT_LABELS = {
+  objection_handling: '反論処理',
+  rapport_building: '関係構築',
+  needs_discovery: 'ニーズ発掘',
+  closing: 'クロージング',
+  product_knowledge: '製品知識',
+  competitor_info: '競合情報',
+  process: 'プロセス',
+  other: 'その他',
+};
+
+let currentSessionId = null;
+
+function showSection(name) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('visible'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(`sec-${name}`).classList.add('visible');
+  event.target.classList.add('active');
+  if (name === 'dashboard') loadStats();
+  if (name === 'search') loadKnowledgeList();
+  if (name === 'playbook') loadPlaybookList();
+}
+
+async function api(path, options = {}) {
+  const res = await fetch(`${API}/api${path}`, options);
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}
+
+async function loadStats() {
+  try {
+    const data = await api('/knowledge/stats/summary');
+    document.getElementById('stat-total').textContent = data.total;
+    const catEl = document.getElementById('cat-stats');
+    catEl.innerHTML = '';
+    for (const [cat, count] of Object.entries(data.by_category)) {
+      catEl.innerHTML += `<div style="display:flex;align-items:center;gap:.75rem;">
+        <span style="flex:1;font-size:.875rem;">${CAT_LABELS[cat] || cat}</span>
+        <div style="background:#dbeafe;height:20px;border-radius:4px;width:${Math.min(count * 20, 300)}px;"></div>
+        <span style="font-weight:600;font-size:.875rem;">${count}</span>
+      </div>`;
+    }
+  } catch(e) { console.error(e); }
+}
+
+// --- インタビュー ---
+async function startInterview() {
+  const name = document.getElementById('interviewee-name').value.trim();
+  if (!name) return alert('担当者名を入力してください');
+  const topic = document.getElementById('interview-topic').value.trim();
+  try {
+    const data = await api('/interview/start', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ interviewee_name: name, topic: topic || null }),
+    });
+    currentSessionId = data.session_id;
+    document.getElementById('interview-start-card').style.display = 'none';
+    document.getElementById('interview-chat-card').style.display = 'block';
+    document.getElementById('interview-title').textContent = `インタビュー: ${name}`;
+    const chat = document.getElementById('chat-area');
+    chat.innerHTML = '';
+    addMessage('ai', data.greeting);
+  } catch(e) { alert('エラー: ' + e.message); }
+}
+
+function addMessage(role, text) {
+  const chat = document.getElementById('chat-area');
+  const div = document.createElement('div');
+  div.className = `msg ${role}`;
+  div.textContent = text;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+async function sendMessage() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text || !currentSessionId) return;
+  input.value = '';
+  addMessage('user', text);
+  try {
+    const data = await api('/interview/message', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ session_id: currentSessionId, message: text }),
+    });
+    addMessage('ai', data.reply);
+  } catch(e) { alert('エラー: ' + e.message); }
+}
+
+async function finalizeInterview() {
+  if (!currentSessionId) return;
+  const btn = event.target;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>形式知化中...';
+  try {
+    const data = await api(`/interview/finalize/${currentSessionId}`, { method: 'POST' });
+    document.getElementById('finalize-result').innerHTML =
+      `<div class="alert alert-success">${data.extracted_count}件の知見を形式知化・登録しました！</div>`;
+    currentSessionId = null;
+    setTimeout(() => {
+      document.getElementById('interview-start-card').style.display = 'block';
+      document.getElementById('interview-chat-card').style.display = 'none';
+    }, 3000);
+  } catch(e) {
+    document.getElementById('finalize-result').innerHTML = `<div class="alert alert-error">${e.message}</div>`;
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '完了・形式知化';
+  }
+}
+
+// --- 取込 ---
+async function uploadDocument() {
+  const file = document.getElementById('upload-file').files[0];
+  if (!file) return alert('ファイルを選択してください');
+  const hint = document.getElementById('upload-hint').value;
+  const form = new FormData();
+  form.append('file', file);
+  form.append('source_hint', hint);
+  const btn = event.target;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>処理中...';
+  try {
+    const res = await fetch(`${API}/api/ingest/document`, { method: 'POST', body: form });
+    const data = await res.json();
+    document.getElementById('upload-result').innerHTML =
+      `<div class="alert alert-success">${data.extracted_count}件のナレッジを抽出・登録しました</div>`;
+  } catch(e) {
+    document.getElementById('upload-result').innerHTML = `<div class="alert alert-error">${e.message}</div>`;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'アップロード・抽出';
+  }
+}
+
+async function ingestText() {
+  const text = document.getElementById('ingest-text').value.trim();
+  if (!text) return alert('テキストを入力してください');
+  const form = new FormData();
+  form.append('text', text);
+  form.append('source_type', document.getElementById('text-source-type').value);
+  form.append('source_name', document.getElementById('text-source-name').value || '手動入力');
+  const btn = event.target;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>処理中...';
+  try {
+    const res = await fetch(`${API}/api/ingest/text`, { method: 'POST', body: form });
+    const data = await res.json();
+    document.getElementById('text-result').innerHTML =
+      `<div class="alert alert-success">${data.extracted_count}件のナレッジを抽出・登録しました</div>`;
+  } catch(e) {
+    document.getElementById('text-result').innerHTML = `<div class="alert alert-error">${e.message}</div>`;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'ナレッジを抽出・登録';
+  }
+}
+
+// --- ナレッジ一覧・検索 ---
+function renderKnowledgeCards(items, container) {
+  container.innerHTML = '';
+  if (!items.length) { container.innerHTML = '<p style="color:var(--text-muted);font-size:.875rem;">結果なし</p>'; return; }
+  items.forEach(item => {
+    const content = item.content || item.metadata?.content || '';
+    const title = item.title || item.metadata?.title || '';
+    const category = item.category || item.metadata?.category || '';
+    const tags = Array.isArray(item.tags) ? item.tags : [];
+    container.innerHTML += `
+      <div class="knowledge-card">
+        <span class="cat">${CAT_LABELS[category] || category}</span>
+        <h3>${title}</h3>
+        <p>${content.length > 200 ? content.slice(0, 200) + '...' : content}</p>
+        ${tags.length ? `<div class="tags">${tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>` : ''}
+      </div>`;
+  });
+}
+
+async function searchKnowledge() {
+  const q = document.getElementById('search-query').value.trim();
+  if (!q) return;
+  const cat = document.getElementById('search-cat').value;
+  try {
+    const params = new URLSearchParams({ q, n: 10 });
+    if (cat) params.append('category', cat);
+    const results = await api(`/knowledge/search?${params}`);
+    const normalized = results.map(r => ({
+      title: r.metadata?.title || '',
+      content: r.content,
+      category: r.metadata?.category || '',
+      tags: [],
+    }));
+    renderKnowledgeCards(normalized, document.getElementById('search-results'));
+  } catch(e) { alert(e.message); }
+}
+
+async function loadKnowledgeList() {
+  try {
+    const items = await api('/knowledge/list?limit=50');
+    renderKnowledgeCards(items, document.getElementById('knowledge-list'));
+  } catch(e) { console.error(e); }
+}
+
+// --- プレイブック ---
+async function generatePlaybook() {
+  const scenario = document.getElementById('pb-scenario').value.trim();
+  if (!scenario) return alert('シナリオを入力してください');
+  const title = document.getElementById('pb-title').value.trim();
+  const btn = event.target;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>生成中...';
+  const resultEl = document.getElementById('pb-result');
+  resultEl.innerHTML = '';
+  try {
+    const data = await api('/playbook/generate', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ scenario, title: title || null }),
+    });
+    resultEl.innerHTML = `<div class="card"><h2>${data.title}</h2><div class="playbook-content">${data.content}</div></div>`;
+    loadPlaybookList();
+  } catch(e) {
+    resultEl.innerHTML = `<div class="alert alert-error">${e.message}</div>`;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'プレイブックを生成';
+  }
+}
+
+async function loadPlaybookList() {
+  try {
+    const items = await api('/playbook/list');
+    const el = document.getElementById('pb-list');
+    if (!items.length) { el.innerHTML = '<p style="color:var(--text-muted);font-size:.875rem;">まだプレイブックがありません</p>'; return; }
+    el.innerHTML = items.map(p => `
+      <div style="border-bottom:1px solid var(--border);padding:.75rem 0;cursor:pointer;" onclick="loadPlaybook(${p.id})">
+        <div style="font-weight:600;font-size:.9rem;">${p.title}</div>
+        <div style="font-size:.8rem;color:var(--text-muted);">${p.scenario.slice(0, 80)}...</div>
+      </div>`).join('');
+  } catch(e) { console.error(e); }
+}
+
+async function loadPlaybook(id) {
+  try {
+    const data = await api(`/playbook/${id}`);
+    document.getElementById('pb-result').innerHTML = `<div class="card"><h2>${data.title}</h2><div class="playbook-content">${data.content}</div></div>`;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } catch(e) { alert(e.message); }
+}
+
+// --- リアルタイムサポート ---
+async function getRealtimeSuggestion() {
+  const situation = document.getElementById('rt-situation').value.trim();
+  if (!situation) return alert('商談の状況を入力してください');
+  const btn = event.target;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>分析中...';
+  const resultEl = document.getElementById('rt-result');
+  resultEl.innerHTML = '';
+  try {
+    const data = await api('/playbook/realtime', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ situation }),
+    });
+    resultEl.innerHTML = `<div class="card"><h2>アドバイス</h2><div class="playbook-content">${data.suggestion}</div></div>`;
+  } catch(e) {
+    resultEl.innerHTML = `<div class="alert alert-error">${e.message}</div>`;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'アドバイスを取得';
+  }
+}
+
+loadStats();
+</script>
+</body>
+</html>
