@@ -6,7 +6,7 @@ from fastapi.responses import FileResponse
 import os
 
 from app.models.database import init_db
-from app.api import interview, ingestion, knowledge, playbook
+from app.api import interview, ingestion, knowledge, playbook, audio, users
 
 
 @asynccontextmanager
@@ -33,6 +33,8 @@ app.include_router(interview.router, prefix="/api")
 app.include_router(ingestion.router, prefix="/api")
 app.include_router(knowledge.router, prefix="/api")
 app.include_router(playbook.router, prefix="/api")
+app.include_router(audio.router, prefix="/api")
+app.include_router(users.router, prefix="/api")
 
 frontend_dir = os.path.join(os.path.dirname(__file__), "..", "frontend")
 if os.path.exists(frontend_dir):

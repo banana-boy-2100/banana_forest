@@ -1,3 +1,4 @@
+from __future__ import annotations
 import uuid
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
@@ -15,6 +16,7 @@ router = APIRouter(prefix="/interview", tags=["interview"])
 class StartInterviewRequest(BaseModel):
     interviewee_name: str
     topic: str | None = None
+    user_id: int | None = None
 
 
 class SendMessageRequest(BaseModel):
@@ -35,6 +37,7 @@ async def start_interview(req: StartInterviewRequest, db: AsyncSession = Depends
         session_id=session_id,
         interviewee_name=req.interviewee_name,
         topic=req.topic,
+        user_id=req.user_id,
     )
     db.add(session)
     await db.flush()
@@ -109,6 +112,7 @@ async def finalize_interview(session_id: str, db: AsyncSession = Depends(get_db)
             source_type=SourceType.INTERVIEW,
             source_name=f"インタビュー: {session.interviewee_name}",
             tags=",".join(item.get("tags", [])),
+            contributor_id=session.user_id,
         )
         db.add(knowledge)
         await db.flush()
@@ -145,6 +149,7 @@ async def list_sessions(db: AsyncSession = Depends(get_db)):
             "interviewee_name": s.interviewee_name,
             "topic": s.topic,
             "status": s.status,
+            "user_id": s.user_id,
             "created_at": s.created_at.isoformat(),
         }
         for s in sessions

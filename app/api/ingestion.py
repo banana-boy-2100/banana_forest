@@ -1,3 +1,4 @@
+from __future__ import annotations
 from fastapi import APIRouter, Depends, UploadFile, File, Form, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -14,7 +15,13 @@ from app.services.vector_store import upsert_knowledge
 router = APIRouter(prefix="/ingest", tags=["ingestion"])
 
 
-async def _save_items(items: list[dict], source_type: str, source_name: str, db: AsyncSession) -> list[int]:
+async def _save_items(
+    items: list[dict],
+    source_type: str,
+    source_name: str,
+    db: AsyncSession,
+    user_id: int | None = None,
+) -> list[int]:
     saved_ids = []
     for item in items:
         knowledge = KnowledgeItem(
@@ -24,6 +31,7 @@ async def _save_items(items: list[dict], source_type: str, source_name: str, db:
             source_type=source_type,
             source_name=source_name,
             tags=",".join(item.get("tags", [])),
+            contributor_id=user_id,
         )
         db.add(knowledge)
         await db.flush()
@@ -50,6 +58,7 @@ async def _save_items(items: list[dict], source_type: str, source_name: str, db:
 async def ingest_document(
     file: UploadFile = File(...),
     source_hint: str = Form(default=""),
+    user_id: int | None = Form(default=None),
     db: AsyncSession = Depends(get_db),
 ):
     content = await file.read()
@@ -62,7 +71,7 @@ async def ingest_document(
     if not items:
         return {"message": "知見を抽出できませんでした", "extracted_count": 0}
 
-    ids = await _save_items(items, SourceType.DOCUMENT, file.filename, db)
+    ids = await _save_items(items, SourceType.DOCUMENT, file.filename, db, user_id=user_id)
     return {"extracted_count": len(ids), "knowledge_ids": ids}
 
 
@@ -71,6 +80,7 @@ async def ingest_text(
     text: str = Form(...),
     source_type: str = Form(default="document"),
     source_name: str = Form(default="手動入力"),
+    user_id: int | None = Form(default=None),
     db: AsyncSession = Depends(get_db),
 ):
     if source_type == "audio":
@@ -83,5 +93,5 @@ async def ingest_text(
     if not items:
         return {"message": "知見を抽出できませんでした", "extracted_count": 0}
 
-    ids = await _save_items(items, source_type, source_name, db)
+    ids = await _save_items(items, source_type, source_name, db, user_id=user_id)
     return {"extracted_count": len(ids), "knowledge_ids": ids}

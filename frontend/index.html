@@ -8,117 +8,381 @@
     :root {
       --primary: #2563eb;
       --primary-dark: #1d4ed8;
-      --surface: #f8fafc;
+      --primary-light: #dbeafe;
+      --surface: #f1f5f9;
       --card: #ffffff;
       --border: #e2e8f0;
       --text: #1e293b;
       --text-muted: #64748b;
       --success: #16a34a;
+      --success-light: #dcfce7;
       --danger: #dc2626;
+      --danger-light: #fee2e2;
+      --warning: #f59e0b;
+      --warning-light: #fef3c7;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--surface); color: var(--text); min-height: 100vh; }
 
-    header { background: var(--primary); color: #fff; padding: 1rem 2rem; display: flex; align-items: center; gap: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,.15); }
-    header h1 { font-size: 1.25rem; font-weight: 700; }
-    header p { font-size: .85rem; opacity: .8; }
+    /* ===== Login Overlay ===== */
+    #login-overlay {
+      position: fixed; inset: 0; background: rgba(15,23,42,0.85); z-index: 1000;
+      display: flex; align-items: center; justify-content: center;
+    }
+    #login-overlay.hidden { display: none; }
+    .login-box {
+      background: var(--card); border-radius: 16px; padding: 2.5rem; width: 100%; max-width: 420px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .login-box h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: .25rem; color: var(--primary); }
+    .login-box p { font-size: .875rem; color: var(--text-muted); margin-bottom: 1.5rem; }
+    .login-tabs { display: flex; gap: .5rem; margin-bottom: 1.5rem; }
+    .login-tab { flex: 1; padding: .5rem; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); cursor: pointer; font-size: .875rem; font-weight: 500; text-align: center; transition: all .15s; }
+    .login-tab.active { background: var(--primary); color: #fff; border-color: var(--primary); }
 
-    nav { display: flex; gap: .5rem; padding: 1rem 2rem; background: var(--card); border-bottom: 1px solid var(--border); flex-wrap: wrap; }
-    nav button { padding: .5rem 1.25rem; border: 1px solid var(--border); border-radius: 6px; background: var(--card); cursor: pointer; font-size: .9rem; transition: all .15s; }
+    /* ===== Header ===== */
+    header {
+      background: var(--primary); color: #fff; padding: .875rem 1.5rem;
+      display: flex; align-items: center; gap: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,.15);
+      position: sticky; top: 0; z-index: 100;
+    }
+    header h1 { font-size: 1.15rem; font-weight: 700; flex: 1; }
+    .header-actions { display: flex; align-items: center; gap: .75rem; }
+    .tts-btn {
+      padding: .4rem .9rem; border: 1px solid rgba(255,255,255,.4); border-radius: 20px;
+      background: rgba(255,255,255,.1); color: #fff; cursor: pointer; font-size: .8rem;
+      transition: background .15s;
+    }
+    .tts-btn.active { background: rgba(255,255,255,.25); border-color: rgba(255,255,255,.7); }
+    .tts-btn:hover { background: rgba(255,255,255,.2); }
+    .user-avatar {
+      width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center;
+      justify-content: center; font-weight: 700; font-size: .85rem; cursor: pointer;
+      border: 2px solid rgba(255,255,255,.5); flex-shrink: 0;
+    }
+    .logout-btn {
+      padding: .4rem .75rem; border: 1px solid rgba(255,255,255,.4); border-radius: 6px;
+      background: transparent; color: #fff; cursor: pointer; font-size: .8rem;
+    }
+    .logout-btn:hover { background: rgba(255,255,255,.15); }
+
+    /* ===== Nav ===== */
+    nav {
+      display: flex; gap: .375rem; padding: .75rem 1.5rem; background: var(--card);
+      border-bottom: 1px solid var(--border); flex-wrap: wrap; overflow-x: auto;
+    }
+    nav button {
+      padding: .45rem 1rem; border: 1px solid var(--border); border-radius: 6px;
+      background: var(--card); cursor: pointer; font-size: .85rem; white-space: nowrap;
+      transition: all .15s; font-weight: 500;
+    }
     nav button:hover { background: var(--surface); }
     nav button.active { background: var(--primary); color: #fff; border-color: var(--primary); }
 
-    main { max-width: 960px; margin: 2rem auto; padding: 0 1.5rem 4rem; }
-
+    /* ===== Main ===== */
+    main { max-width: 980px; margin: 1.5rem auto; padding: 0 1.25rem 4rem; }
     .section { display: none; }
     .section.visible { display: block; }
 
-    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; }
-    .card h2 { font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; }
+    /* ===== Cards ===== */
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 1.5rem; margin-bottom: 1.25rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,.05);
+    }
+    .card h2 { font-size: 1.05rem; font-weight: 600; margin-bottom: 1rem; }
+    .card:hover { box-shadow: 0 3px 12px rgba(0,0,0,.08); transition: box-shadow .2s; }
 
+    /* ===== Forms ===== */
     .form-group { margin-bottom: 1rem; }
-    label { display: block; font-size: .875rem; font-weight: 500; margin-bottom: .375rem; color: var(--text-muted); }
-    input[type=text], textarea, select { width: 100%; padding: .625rem .875rem; border: 1px solid var(--border); border-radius: 6px; font-size: .9rem; font-family: inherit; }
+    label { display: block; font-size: .8rem; font-weight: 600; margin-bottom: .35rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: .03em; }
+    input[type=text], input[type=password], textarea, select {
+      width: 100%; padding: .6rem .875rem; border: 1px solid var(--border);
+      border-radius: 6px; font-size: .9rem; font-family: inherit; background: var(--card);
+    }
     textarea { resize: vertical; min-height: 100px; }
     input:focus, textarea:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
 
-    .btn { padding: .625rem 1.25rem; border: none; border-radius: 6px; font-size: .9rem; font-weight: 500; cursor: pointer; transition: background .15s; }
+    /* ===== Buttons ===== */
+    .btn { padding: .6rem 1.2rem; border: none; border-radius: 7px; font-size: .875rem; font-weight: 600; cursor: pointer; transition: all .15s; display: inline-flex; align-items: center; gap: .4rem; }
+    .btn:disabled { opacity: .6; cursor: not-allowed; }
     .btn-primary { background: var(--primary); color: #fff; }
-    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-primary:hover:not(:disabled) { background: var(--primary-dark); }
+    .btn-success { background: var(--success); color: #fff; }
+    .btn-success:hover:not(:disabled) { background: #15803d; }
     .btn-danger { background: var(--danger); color: #fff; }
-    .btn-sm { padding: .375rem .75rem; font-size: .8rem; }
+    .btn-danger:hover:not(:disabled) { background: #b91c1c; }
+    .btn-warning { background: var(--warning); color: #fff; }
+    .btn-warning:hover:not(:disabled) { background: #d97706; }
+    .btn-ghost { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+    .btn-ghost:hover:not(:disabled) { background: var(--border); }
+    .btn-sm { padding: .35rem .75rem; font-size: .8rem; }
+    .btn-icon { padding: .4rem; width: 36px; height: 36px; border-radius: 8px; justify-content: center; }
+    .btn-row { display: flex; gap: .625rem; flex-wrap: wrap; margin-top: .75rem; }
 
-    .chat-area { height: 400px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; padding: 1rem; display: flex; flex-direction: column; gap: .75rem; background: var(--surface); margin-bottom: 1rem; }
-    .msg { max-width: 80%; padding: .75rem 1rem; border-radius: 12px; font-size: .9rem; line-height: 1.5; }
-    .msg.ai { background: #fff; border: 1px solid var(--border); align-self: flex-start; }
+    /* ===== Chat ===== */
+    .chat-area {
+      height: 380px; overflow-y: auto; border: 1px solid var(--border); border-radius: 10px;
+      padding: 1rem; display: flex; flex-direction: column; gap: .75rem;
+      background: var(--surface); margin-bottom: 1rem;
+    }
+    .msg { max-width: 82%; padding: .75rem 1rem; border-radius: 12px; font-size: .9rem; line-height: 1.55; }
+    .msg.ai { background: var(--card); border: 1px solid var(--border); align-self: flex-start; }
+    .msg.ai.speaking { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(37,99,235,.2); }
     .msg.user { background: var(--primary); color: #fff; align-self: flex-end; }
-    .msg-input-row { display: flex; gap: .75rem; }
-    .msg-input-row input { flex: 1; }
+    .chat-controls { display: flex; gap: .625rem; align-items: center; }
+    .chat-controls input { flex: 1; }
 
-    .knowledge-grid { display: grid; gap: 1rem; }
-    .knowledge-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; }
-    .knowledge-card .cat { display: inline-block; font-size: .75rem; padding: .2rem .6rem; border-radius: 20px; background: #dbeafe; color: #1d4ed8; margin-bottom: .5rem; }
-    .knowledge-card h3 { font-size: .95rem; font-weight: 600; margin-bottom: .5rem; }
-    .knowledge-card p { font-size: .85rem; color: var(--text-muted); line-height: 1.5; }
-    .knowledge-card .tags { margin-top: .5rem; display: flex; flex-wrap: wrap; gap: .375rem; }
-    .tag { font-size: .75rem; padding: .15rem .5rem; background: #f1f5f9; border-radius: 12px; color: var(--text-muted); }
+    /* ===== Mic button ===== */
+    .mic-btn {
+      width: 44px; height: 44px; border-radius: 50%; border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+      background: var(--surface); border: 1.5px solid var(--border); transition: all .15s;
+      flex-shrink: 0;
+    }
+    .mic-btn.listening {
+      background: #fee2e2; border-color: var(--danger);
+      animation: pulse-mic 1s ease-in-out infinite;
+    }
+    @keyframes pulse-mic {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(220,38,38,.4); }
+      50% { box-shadow: 0 0 0 8px rgba(220,38,38,0); }
+    }
+    .recording-indicator {
+      display: none; align-items: center; gap: .5rem; font-size: .8rem; color: var(--danger);
+      font-weight: 600;
+    }
+    .recording-indicator.active { display: flex; }
+    .rec-dot {
+      width: 10px; height: 10px; border-radius: 50%; background: var(--danger);
+      animation: blink 1s step-start infinite;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
 
-    .playbook-content { white-space: pre-wrap; font-size: .88rem; line-height: 1.7; background: var(--surface); padding: 1rem; border-radius: 8px; border: 1px solid var(--border); max-height: 500px; overflow-y: auto; }
+    /* ===== Knowledge cards ===== */
+    .knowledge-grid { display: grid; gap: .875rem; }
+    .knowledge-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+      padding: 1rem; transition: box-shadow .15s;
+    }
+    .knowledge-card:hover { box-shadow: 0 3px 12px rgba(0,0,0,.08); }
+    .knowledge-card .cat {
+      display: inline-block; font-size: .72rem; padding: .2rem .65rem; border-radius: 20px;
+      background: var(--primary-light); color: var(--primary-dark); margin-bottom: .5rem; font-weight: 600;
+    }
+    .knowledge-card h3 { font-size: .92rem; font-weight: 600; margin-bottom: .4rem; }
+    .knowledge-card p { font-size: .84rem; color: var(--text-muted); line-height: 1.55; }
+    .knowledge-card .tags { margin-top: .5rem; display: flex; flex-wrap: wrap; gap: .3rem; }
+    .tag { font-size: .72rem; padding: .15rem .55rem; background: var(--surface); border-radius: 12px; color: var(--text-muted); }
+    .knowledge-card .card-actions { display: flex; gap: .4rem; margin-top: .75rem; flex-wrap: wrap; align-items: center; }
+    .enriched-badge { font-size: .7rem; padding: .15rem .5rem; background: #fef3c7; color: #92400e; border-radius: 12px; font-weight: 600; }
 
-    .stats-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
-    .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; text-align: center; }
+    /* ===== Stats ===== */
+    .stats-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1rem; margin-bottom: 1.25rem; }
+    .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.1rem; text-align: center; }
     .stat-card .num { font-size: 2rem; font-weight: 700; color: var(--primary); }
-    .stat-card .label { font-size: .75rem; color: var(--text-muted); margin-top: .25rem; }
+    .stat-card .label { font-size: .75rem; color: var(--text-muted); margin-top: .2rem; }
 
-    .alert { padding: .75rem 1rem; border-radius: 6px; margin-bottom: 1rem; font-size: .875rem; }
-    .alert-success { background: #dcfce7; color: #16a34a; }
-    .alert-error { background: #fee2e2; color: #dc2626; }
+    /* ===== Alerts ===== */
+    .alert { padding: .75rem 1rem; border-radius: 8px; margin-bottom: 1rem; font-size: .875rem; }
+    .alert-success { background: var(--success-light); color: var(--success); }
+    .alert-error { background: var(--danger-light); color: var(--danger); }
+    .alert-info { background: var(--primary-light); color: var(--primary-dark); }
 
-    .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid #fff; border-top-color: transparent; border-radius: 50%; animation: spin .6s linear infinite; vertical-align: middle; margin-right: .5rem; }
+    /* ===== Spinner ===== */
+    .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.4); border-top-color: #fff; border-radius: 50%; animation: spin .6s linear infinite; }
+    .spinner-dark { border-color: rgba(0,0,0,.15); border-top-color: var(--primary); }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    .search-row { display: flex; gap: .75rem; margin-bottom: 1rem; }
-    .search-row input { flex: 1; }
+    /* ===== Search row ===== */
+    .search-row { display: flex; gap: .625rem; margin-bottom: 1rem; flex-wrap: wrap; }
+    .search-row input { flex: 1; min-width: 200px; }
 
-    .cat-label { font-size: .8rem; }
-    .CAT_LABELS { display: none; }
+    /* ===== Playbook ===== */
+    .playbook-content { white-space: pre-wrap; font-size: .875rem; line-height: 1.75; background: var(--surface); padding: 1rem; border-radius: 8px; border: 1px solid var(--border); max-height: 500px; overflow-y: auto; }
+
+    /* ===== Tabs (inside section) ===== */
+    .tab-bar { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 1.25rem; gap: 0; }
+    .tab-btn { padding: .6rem 1.1rem; border: none; background: transparent; cursor: pointer; font-size: .875rem; font-weight: 500; color: var(--text-muted); border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all .15s; }
+    .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ===== Leaderboard ===== */
+    .leaderboard { display: grid; gap: .625rem; }
+    .leaderboard-item { display: flex; align-items: center; gap: .875rem; padding: .75rem 1rem; background: var(--surface); border-radius: 8px; }
+    .rank { font-size: 1.1rem; font-weight: 700; color: var(--text-muted); width: 24px; text-align: center; }
+    .rank-1 { color: #f59e0b; }
+    .rank-2 { color: #94a3b8; }
+    .rank-3 { color: #c2722b; }
+    .lb-avatar { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: .85rem; flex-shrink: 0; }
+    .lb-name { flex: 1; font-weight: 600; font-size: .9rem; }
+    .lb-count { font-size: .8rem; color: var(--text-muted); }
+    .lb-badge { font-size: .72rem; padding: .15rem .5rem; background: var(--primary-light); color: var(--primary-dark); border-radius: 12px; font-weight: 600; }
+
+    /* ===== Transcript list ===== */
+    .transcript-item { border: 1px solid var(--border); border-radius: 10px; padding: 1rem; margin-bottom: .75rem; cursor: pointer; transition: box-shadow .15s; }
+    .transcript-item:hover { box-shadow: 0 3px 12px rgba(0,0,0,.08); }
+    .transcript-item .t-header { display: flex; align-items: center; gap: .75rem; margin-bottom: .5rem; }
+    .transcript-item .t-title { font-weight: 600; font-size: .9rem; flex: 1; }
+    .transcript-item .t-meta { font-size: .78rem; color: var(--text-muted); }
+    .transcript-item .t-preview { font-size: .84rem; color: var(--text-muted); line-height: 1.5; }
+    .transcript-item .t-full { margin-top: .75rem; font-size: .84rem; line-height: 1.6; display: none; white-space: pre-wrap; }
+    .transcript-item.expanded .t-full { display: block; }
+    .source-badge { font-size: .7rem; padding: .15rem .55rem; border-radius: 12px; font-weight: 600; }
+    .source-file { background: #e0f2fe; color: #0369a1; }
+    .source-browser { background: #f0fdf4; color: #166534; }
+    .source-interview { background: #fdf4ff; color: #7e22ce; }
+
+    /* ===== Edit modal ===== */
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(15,23,42,.5); z-index: 500; display: flex; align-items: center; justify-content: center; }
+    .modal-backdrop.hidden { display: none; }
+    .modal { background: var(--card); border-radius: 14px; padding: 2rem; width: 100%; max-width: 580px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,.25); }
+    .modal h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 1.25rem; }
+    .modal-actions { display: flex; gap: .625rem; margin-top: 1.25rem; justify-content: flex-end; }
+
+    /* ===== Audio tabs ===== */
+    .audio-drop-area {
+      border: 2px dashed var(--border); border-radius: 10px; padding: 2.5rem; text-align: center;
+      cursor: pointer; transition: all .2s; color: var(--text-muted);
+    }
+    .audio-drop-area:hover, .audio-drop-area.drag-over { border-color: var(--primary); background: var(--primary-light); }
+    .audio-drop-area .drop-icon { font-size: 2.5rem; margin-bottom: .75rem; }
+    .audio-drop-area p { font-size: .875rem; }
+
+    /* ===== Activity feed ===== */
+    .activity-feed { display: grid; gap: .5rem; }
+    .activity-item { display: flex; align-items: flex-start; gap: .75rem; padding: .625rem .875rem; background: var(--surface); border-radius: 8px; }
+    .activity-icon { font-size: 1rem; flex-shrink: 0; margin-top: .1rem; }
+    .activity-text { font-size: .84rem; flex: 1; line-height: 1.45; }
+    .activity-time { font-size: .75rem; color: var(--text-muted); white-space: nowrap; }
+
+    /* ===== Synthesis result ===== */
+    .synthesis-result { white-space: pre-wrap; font-size: .875rem; line-height: 1.75; }
+
+    @media (max-width: 640px) {
+      main { padding: 0 .75rem 3rem; }
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      header h1 { font-size: 1rem; }
+    }
   </style>
 </head>
 <body>
 
+<!-- ===== Login Overlay ===== -->
+<div id="login-overlay">
+  <div class="login-box">
+    <h2>🏆 営業暗黙知 AI</h2>
+    <p>ログインまたは新規登録してください</p>
+    <div class="login-tabs">
+      <div class="login-tab active" onclick="switchLoginTab('login')">ログイン</div>
+      <div class="login-tab" onclick="switchLoginTab('register')">新規登録</div>
+    </div>
+    <div id="login-form">
+      <div class="form-group">
+        <label>ユーザー名</label>
+        <input type="text" id="login-name" placeholder="例: tanaka_taro" />
+      </div>
+      <div class="form-group">
+        <label>PIN (数字4桁)</label>
+        <input type="password" id="login-pin" placeholder="••••" maxlength="4" />
+      </div>
+      <div id="login-error" style="color:var(--danger);font-size:.85rem;margin-bottom:.75rem;display:none;"></div>
+      <button class="btn btn-primary" style="width:100%" onclick="doLogin()">ログイン</button>
+    </div>
+    <div id="register-form" style="display:none;">
+      <div class="form-group">
+        <label>ユーザー名 (英数字・アンダースコア)</label>
+        <input type="text" id="reg-name" placeholder="例: tanaka_taro" />
+      </div>
+      <div class="form-group">
+        <label>表示名</label>
+        <input type="text" id="reg-display" placeholder="例: 田中 太郎" />
+      </div>
+      <div class="form-group">
+        <label>PIN (数字4桁)</label>
+        <input type="password" id="reg-pin" placeholder="••••" maxlength="4" />
+      </div>
+      <div id="register-error" style="color:var(--danger);font-size:.85rem;margin-bottom:.75rem;display:none;"></div>
+      <button class="btn btn-primary" style="width:100%" onclick="doRegister()">登録してログイン</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Edit Modal ===== -->
+<div id="edit-modal" class="modal-backdrop hidden">
+  <div class="modal">
+    <h3>ナレッジを編集</h3>
+    <input type="hidden" id="edit-id" />
+    <div class="form-group">
+      <label>タイトル</label>
+      <input type="text" id="edit-title" />
+    </div>
+    <div class="form-group">
+      <label>内容</label>
+      <textarea id="edit-content" rows="8"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeEditModal()">キャンセル</button>
+      <button class="btn btn-primary" onclick="saveEdit()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Header ===== -->
 <header>
-  <div>
-    <h1>営業暗黙知 AI ツール</h1>
-    <p>Sales Knowledge Formalization Platform</p>
+  <h1>営業暗黙知 AI ツール</h1>
+  <div class="header-actions">
+    <button class="tts-btn" id="tts-btn" onclick="toggleTTS()" title="音声読み上げ">🔊 TTS</button>
+    <div class="user-avatar" id="user-avatar" title="ユーザー情報"></div>
+    <button class="logout-btn" onclick="doLogout()">ログアウト</button>
   </div>
 </header>
 
-<nav>
-  <button class="active" onclick="showSection('dashboard')">ダッシュボード</button>
-  <button onclick="showSection('interview')">AIインタビュー</button>
-  <button onclick="showSection('ingest')">ナレッジ取込</button>
-  <button onclick="showSection('search')">ナレッジ検索</button>
-  <button onclick="showSection('playbook')">プレイブック</button>
-  <button onclick="showSection('realtime')">商談サポート</button>
+<!-- ===== Navigation ===== -->
+<nav id="main-nav">
+  <button class="active" onclick="showSection('dashboard', this)">ダッシュボード</button>
+  <button onclick="showSection('interview', this)">AIインタビュー</button>
+  <button onclick="showSection('ingest', this)">ナレッジ取込</button>
+  <button onclick="showSection('search', this)">ナレッジ検索</button>
+  <button onclick="showSection('playbook', this)">プレイブック</button>
+  <button onclick="showSection('realtime', this)">商談サポート</button>
+  <button onclick="showSection('transcripts', this)">発言録</button>
+  <button onclick="showSection('manage', this)">ナレッジ管理</button>
 </nav>
 
 <main>
 
-  <!-- ダッシュボード -->
+  <!-- ===== ダッシュボード ===== -->
   <div id="sec-dashboard" class="section visible">
     <div class="stats-row" id="stats-row">
-      <div class="stat-card"><div class="num" id="stat-total">-</div><div class="label">総ナレッジ数</div></div>
+      <div class="stat-card"><div class="num" id="stat-total">-</div><div class="label">総ナレッジ</div></div>
+      <div class="stat-card"><div class="num" id="stat-users">-</div><div class="label">ユーザー数</div></div>
+      <div class="stat-card"><div class="num" id="stat-transcripts">-</div><div class="label">発言録</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;">
+      <div class="card">
+        <h2>カテゴリ別ナレッジ</h2>
+        <div id="cat-stats" style="display:grid;gap:.5rem;"></div>
+      </div>
+      <div class="card">
+        <h2>🏆 貢献ランキング</h2>
+        <div class="leaderboard" id="leaderboard"></div>
+      </div>
     </div>
     <div class="card">
-      <h2>カテゴリ別ナレッジ</h2>
-      <div id="cat-stats" style="display:grid;gap:.5rem;"></div>
+      <h2>最近のアクティビティ</h2>
+      <div class="activity-feed" id="activity-feed">
+        <p style="color:var(--text-muted);font-size:.875rem;">ナレッジを追加するとここに表示されます</p>
+      </div>
     </div>
   </div>
 
-  <!-- AIインタビュー -->
+  <!-- ===== AIインタビュー ===== -->
   <div id="sec-interview" class="section">
     <div class="card" id="interview-start-card">
       <h2>インタビューを開始する</h2>
+      <div id="interview-user-info" style="margin-bottom:1rem;font-size:.875rem;color:var(--text-muted);"></div>
       <div class="form-group">
         <label>担当者名</label>
         <input type="text" id="interviewee-name" placeholder="例: 田中 太郎" />
@@ -133,61 +397,109 @@
     <div class="card" id="interview-chat-card" style="display:none;">
       <h2 id="interview-title">インタビュー中...</h2>
       <div class="chat-area" id="chat-area"></div>
-      <div class="msg-input-row">
-        <input type="text" id="chat-input" placeholder="メッセージを入力..." onkeydown="if(event.key==='Enter')sendMessage()" />
+      <div class="recording-indicator" id="rec-indicator">
+        <div class="rec-dot"></div>
+        <span id="rec-label">録音中...</span>
+      </div>
+      <div class="chat-controls">
+        <button class="mic-btn" id="mic-btn" onclick="toggleSpeechInput()" title="音声入力">🎤</button>
+        <button class="btn btn-ghost btn-sm" id="hq-rec-btn" onclick="toggleHighQualityRec()" title="高精度録音 (Whisper)">🎙 高精度録音</button>
+        <input type="text" id="chat-input" placeholder="メッセージを入力...（Enterで送信）" onkeydown="if(event.key==='Enter')sendMessage()" />
         <button class="btn btn-primary" onclick="sendMessage()">送信</button>
-        <button class="btn" onclick="finalizeInterview()" style="background:#f59e0b;color:#fff;">完了・形式知化</button>
+        <button class="btn btn-warning" onclick="finalizeInterview()">完了・形式知化</button>
       </div>
       <div id="finalize-result" style="margin-top:1rem;"></div>
     </div>
   </div>
 
-  <!-- ナレッジ取込 -->
+  <!-- ===== ナレッジ取込 ===== -->
   <div id="sec-ingest" class="section">
     <div class="card">
-      <h2>ファイルアップロード（商談メモ・議事録）</h2>
-      <div class="form-group">
-        <label>テキストファイル (.txt, .md)</label>
-        <input type="file" id="upload-file" accept=".txt,.md,.csv" />
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchIngestTab('audio-file', this)">音声ファイル</button>
+        <button class="tab-btn" onclick="switchIngestTab('live-rec', this)">ライブ録音</button>
+        <button class="tab-btn" onclick="switchIngestTab('text-paste', this)">テキスト貼付</button>
+        <button class="tab-btn" onclick="switchIngestTab('doc-upload', this)">ドキュメント</button>
       </div>
-      <div class="form-group">
-        <label>ソースヒント（任意）</label>
-        <input type="text" id="upload-hint" placeholder="例: 2024年Q4 エンタープライズ商談メモ" />
-      </div>
-      <button class="btn btn-primary" onclick="uploadDocument()">アップロード・抽出</button>
-      <div id="upload-result" style="margin-top:1rem;"></div>
-    </div>
 
-    <div class="card">
-      <h2>テキスト直接入力</h2>
-      <div class="form-group">
-        <label>ソース種別</label>
-        <select id="text-source-type">
-          <option value="document">商談メモ・議事録</option>
-          <option value="audio">音声文字起こし</option>
-          <option value="chat">Slack/チャットログ</option>
-        </select>
+      <!-- 音声ファイル -->
+      <div id="tab-audio-file" class="tab-panel active">
+        <h2>音声ファイルをアップロード</h2>
+        <div class="audio-drop-area" id="audio-drop-area" onclick="document.getElementById('audio-file-input').click()">
+          <div class="drop-icon">🎵</div>
+          <p>クリックまたはドラッグ＆ドロップでファイルを選択</p>
+          <p style="font-size:.78rem;margin-top:.5rem;opacity:.7;">対応形式: MP3, MP4, M4A, WAV, WebM, OGG, FLAC (最大25MB)</p>
+          <input type="file" id="audio-file-input" accept=".mp3,.mp4,.m4a,.wav,.webm,.ogg,.oga,.flac,.mpeg,.mpga" style="display:none;" onchange="handleAudioFileSelect(this)" />
+        </div>
+        <div id="audio-file-info" style="display:none;margin-top:1rem;" class="alert alert-info"></div>
+        <div class="form-group" style="margin-top:1rem;">
+          <label><input type="checkbox" id="audio-extract-knowledge" checked style="width:auto;margin-right:.4rem;" /> ナレッジを自動抽出する</label>
+        </div>
+        <button class="btn btn-primary" id="audio-upload-btn" onclick="uploadAudioFile()" disabled>文字起こし・抽出</button>
+        <div id="audio-result" style="margin-top:1rem;"></div>
       </div>
-      <div class="form-group">
-        <label>ソース名</label>
-        <input type="text" id="text-source-name" placeholder="例: 2024-11 ABC商事商談" />
+
+      <!-- ライブ録音 -->
+      <div id="tab-live-rec" class="tab-panel">
+        <h2>ライブ録音</h2>
+        <p style="font-size:.875rem;color:var(--text-muted);margin-bottom:1.25rem;">マイクで録音し、Whisperで高精度に文字起こしします。</p>
+        <div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap;">
+          <button class="btn btn-danger" id="live-rec-btn" onclick="toggleLiveRecording()">● 録音開始</button>
+          <div class="recording-indicator" id="live-rec-indicator">
+            <div class="rec-dot"></div>
+            <span id="live-rec-time">0:00</span>
+          </div>
+        </div>
+        <div id="live-rec-result" style="margin-top:1.25rem;"></div>
       </div>
-      <div class="form-group">
-        <label>テキスト</label>
-        <textarea id="ingest-text" rows="8" placeholder="ここにテキストを貼り付けてください..."></textarea>
+
+      <!-- テキスト貼付 -->
+      <div id="tab-text-paste" class="tab-panel">
+        <h2>テキスト直接入力</h2>
+        <div class="form-group">
+          <label>ソース種別</label>
+          <select id="text-source-type">
+            <option value="document">商談メモ・議事録</option>
+            <option value="audio">音声文字起こし</option>
+            <option value="chat">Slack/チャットログ</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>ソース名</label>
+          <input type="text" id="text-source-name" placeholder="例: 2024-11 ABC商事商談" />
+        </div>
+        <div class="form-group">
+          <label>テキスト</label>
+          <textarea id="ingest-text" rows="8" placeholder="ここにテキストを貼り付けてください..."></textarea>
+        </div>
+        <button class="btn btn-primary" onclick="ingestText()">ナレッジを抽出・登録</button>
+        <div id="text-result" style="margin-top:1rem;"></div>
       </div>
-      <button class="btn btn-primary" onclick="ingestText()">ナレッジを抽出・登録</button>
-      <div id="text-result" style="margin-top:1rem;"></div>
+
+      <!-- ドキュメント -->
+      <div id="tab-doc-upload" class="tab-panel">
+        <h2>ファイルアップロード（商談メモ・議事録）</h2>
+        <div class="form-group">
+          <label>テキストファイル (.txt, .md, .csv)</label>
+          <input type="file" id="upload-file" accept=".txt,.md,.csv" />
+        </div>
+        <div class="form-group">
+          <label>ソースヒント（任意）</label>
+          <input type="text" id="upload-hint" placeholder="例: 2024年Q4 エンタープライズ商談メモ" />
+        </div>
+        <button class="btn btn-primary" onclick="uploadDocument()">アップロード・抽出</button>
+        <div id="upload-result" style="margin-top:1rem;"></div>
+      </div>
     </div>
   </div>
 
-  <!-- ナレッジ検索 -->
+  <!-- ===== ナレッジ検索 ===== -->
   <div id="sec-search" class="section">
     <div class="card">
       <h2>ナレッジ検索</h2>
       <div class="search-row">
         <input type="text" id="search-query" placeholder="例: 価格交渉の断り方、初回アポの取り方..." onkeydown="if(event.key==='Enter')searchKnowledge()" />
-        <select id="search-cat" style="width:180px;">
+        <select id="search-cat" style="width:160px;">
           <option value="">全カテゴリ</option>
           <option value="objection_handling">反論処理</option>
           <option value="rapport_building">関係構築</option>
@@ -209,7 +521,7 @@
     </div>
   </div>
 
-  <!-- プレイブック -->
+  <!-- ===== プレイブック ===== -->
   <div id="sec-playbook" class="section">
     <div class="card">
       <h2>プレイブック生成</h2>
@@ -224,24 +536,63 @@
       <button class="btn btn-primary" onclick="generatePlaybook()">プレイブックを生成</button>
       <div id="pb-result" style="margin-top:1.5rem;"></div>
     </div>
-
     <div class="card">
       <h2>保存済みプレイブック</h2>
       <div id="pb-list"></div>
     </div>
   </div>
 
-  <!-- 商談サポート -->
+  <!-- ===== 商談サポート ===== -->
   <div id="sec-realtime" class="section">
     <div class="card">
       <h2>商談リアルタイムサポート</h2>
       <p style="font-size:.875rem;color:var(--text-muted);margin-bottom:1rem;">現在の商談状況を入力すると、蓄積ナレッジを元にすぐ使えるアドバイスを提供します。</p>
       <div class="form-group">
         <label>商談の状況</label>
-        <textarea id="rt-situation" rows="5" placeholder="例: 顧客が「予算がない」と言って断ろうとしている。まだニーズはありそうだが、決断を避けている様子。競合のAシステムを使っていると言っている。"></textarea>
+        <textarea id="rt-situation" rows="5" placeholder="例: 顧客が「予算がない」と言って断ろうとしている。まだニーズはありそうだが..."></textarea>
       </div>
       <button class="btn btn-primary" onclick="getRealtimeSuggestion()">アドバイスを取得</button>
       <div id="rt-result" style="margin-top:1.5rem;"></div>
+    </div>
+  </div>
+
+  <!-- ===== 発言録 ===== -->
+  <div id="sec-transcripts" class="section">
+    <div class="card">
+      <h2>発言録一覧</h2>
+      <div style="display:flex;gap:.625rem;margin-bottom:1rem;flex-wrap:wrap;align-items:center;">
+        <select id="transcript-filter-user" style="width:180px;" onchange="loadTranscripts()">
+          <option value="">全ユーザー</option>
+        </select>
+        <button class="btn btn-ghost btn-sm" onclick="loadTranscripts()">更新</button>
+      </div>
+      <div id="transcript-list">
+        <p style="color:var(--text-muted);font-size:.875rem;">発言録がありません</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ナレッジ管理 ===== -->
+  <div id="sec-manage" class="section">
+    <div class="card">
+      <h2>ナレッジ管理</h2>
+      <div style="display:flex;gap:.625rem;margin-bottom:1rem;flex-wrap:wrap;align-items:center;">
+        <select id="manage-cat-filter" style="width:180px;" onchange="loadManageList()">
+          <option value="">全カテゴリ</option>
+          <option value="objection_handling">反論処理</option>
+          <option value="rapport_building">関係構築</option>
+          <option value="needs_discovery">ニーズ発掘</option>
+          <option value="closing">クロージング</option>
+          <option value="product_knowledge">製品知識</option>
+          <option value="competitor_info">競合情報</option>
+          <option value="process">プロセス</option>
+          <option value="other">その他</option>
+        </select>
+        <button class="btn btn-ghost btn-sm" onclick="loadManageList()">更新</button>
+        <button class="btn btn-primary btn-sm" onclick="synthesizeCategory()" id="synth-btn">カテゴリ分析</button>
+      </div>
+      <div id="manage-synth-result" style="margin-bottom:1rem;"></div>
+      <div class="knowledge-grid" id="manage-list"></div>
     </div>
   </div>
 
@@ -260,50 +611,266 @@ const CAT_LABELS = {
   other: 'その他',
 };
 
+// ===== State =====
+let currentUser = null;
+let ttsEnabled = false;
 let currentSessionId = null;
 
-function showSection(name) {
+// Speech Recognition
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+let recognition = null;
+let isListening = false;
+
+// MediaRecorder
+let mediaRecorder = null;
+let audioChunks = [];
+let isHQRecording = false;
+let liveMediaRecorder = null;
+let liveAudioChunks = [];
+let isLiveRecording = false;
+let liveRecTimer = null;
+let liveRecSeconds = 0;
+
+// ===== Init =====
+(function init() {
+  // Load persisted state
+  const saved = localStorage.getItem('currentUser');
+  if (saved) {
+    try { currentUser = JSON.parse(saved); } catch(e) {}
+  }
+  ttsEnabled = localStorage.getItem('ttsEnabled') === 'true';
+  updateTTSBtn();
+
+  if (currentUser) {
+    hideLoginOverlay();
+    updateUserAvatar();
+    loadStats();
+  }
+
+  // Setup audio drag/drop
+  const dropArea = document.getElementById('audio-drop-area');
+  if (dropArea) {
+    dropArea.addEventListener('dragover', e => { e.preventDefault(); dropArea.classList.add('drag-over'); });
+    dropArea.addEventListener('dragleave', () => dropArea.classList.remove('drag-over'));
+    dropArea.addEventListener('drop', e => {
+      e.preventDefault();
+      dropArea.classList.remove('drag-over');
+      const file = e.dataTransfer.files[0];
+      if (file) setAudioFile(file);
+    });
+  }
+})();
+
+// ===== Login/Register =====
+function switchLoginTab(tab) {
+  document.querySelectorAll('.login-tab').forEach((t,i) => t.classList.toggle('active', (i===0 && tab==='login') || (i===1 && tab==='register')));
+  document.getElementById('login-form').style.display = tab === 'login' ? 'block' : 'none';
+  document.getElementById('register-form').style.display = tab === 'register' ? 'block' : 'none';
+}
+
+async function doLogin() {
+  const name = document.getElementById('login-name').value.trim();
+  const pin = document.getElementById('login-pin').value.trim();
+  const errEl = document.getElementById('login-error');
+  errEl.style.display = 'none';
+  if (!name || !pin) { errEl.textContent = '名前とPINを入力してください'; errEl.style.display = 'block'; return; }
+  try {
+    const data = await apiFetch('/users/login', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ name, pin }) });
+    setCurrentUser(data);
+  } catch(e) {
+    errEl.textContent = 'ログイン失敗: ' + extractError(e);
+    errEl.style.display = 'block';
+  }
+}
+
+async function doRegister() {
+  const name = document.getElementById('reg-name').value.trim();
+  const displayName = document.getElementById('reg-display').value.trim();
+  const pin = document.getElementById('reg-pin').value.trim();
+  const errEl = document.getElementById('register-error');
+  errEl.style.display = 'none';
+  if (!name || !displayName || !pin) { errEl.textContent = '全ての項目を入力してください'; errEl.style.display = 'block'; return; }
+  try {
+    const data = await apiFetch('/users/register', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ name, display_name: displayName, pin }) });
+    setCurrentUser(data);
+  } catch(e) {
+    errEl.textContent = '登録失敗: ' + extractError(e);
+    errEl.style.display = 'block';
+  }
+}
+
+function setCurrentUser(user) {
+  currentUser = user;
+  localStorage.setItem('currentUser', JSON.stringify(user));
+  hideLoginOverlay();
+  updateUserAvatar();
+  loadStats();
+  // Update interview section with user info
+  const infoEl = document.getElementById('interview-user-info');
+  if (infoEl) infoEl.textContent = `ログイン中: ${user.display_name}`;
+}
+
+function doLogout() {
+  currentUser = null;
+  localStorage.removeItem('currentUser');
+  document.getElementById('login-overlay').classList.remove('hidden');
+  document.getElementById('login-name').value = '';
+  document.getElementById('login-pin').value = '';
+  document.getElementById('login-error').style.display = 'none';
+}
+
+function hideLoginOverlay() {
+  document.getElementById('login-overlay').classList.add('hidden');
+  if (currentUser) {
+    const infoEl = document.getElementById('interview-user-info');
+    if (infoEl) infoEl.textContent = `ログイン中: ${currentUser.display_name}`;
+  }
+}
+
+function updateUserAvatar() {
+  const av = document.getElementById('user-avatar');
+  if (currentUser && av) {
+    av.style.background = currentUser.color || '#2563eb';
+    av.textContent = (currentUser.display_name || currentUser.name || '?').charAt(0).toUpperCase();
+    av.title = currentUser.display_name;
+  }
+}
+
+// ===== TTS =====
+function toggleTTS() {
+  ttsEnabled = !ttsEnabled;
+  localStorage.setItem('ttsEnabled', ttsEnabled);
+  updateTTSBtn();
+}
+function updateTTSBtn() {
+  const btn = document.getElementById('tts-btn');
+  if (btn) btn.classList.toggle('active', ttsEnabled);
+}
+function speak(text) {
+  if (!ttsEnabled || !window.speechSynthesis) return;
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'ja-JP';
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(u);
+}
+
+// ===== Navigation =====
+function showSection(name, btn) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('visible'));
   document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
   document.getElementById(`sec-${name}`).classList.add('visible');
-  event.target.classList.add('active');
-  if (name === 'dashboard') loadStats();
+  if (btn) btn.classList.add('active');
+  if (name === 'dashboard') loadDashboard();
   if (name === 'search') loadKnowledgeList();
   if (name === 'playbook') loadPlaybookList();
+  if (name === 'transcripts') { loadTranscriptUserFilter(); loadTranscripts(); }
+  if (name === 'manage') loadManageList();
 }
 
-async function api(path, options = {}) {
+// ===== API helper =====
+async function apiFetch(path, options = {}) {
   const res = await fetch(`${API}/api${path}`, options);
-  if (!res.ok) throw new Error(await res.text());
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(text);
+  }
   return res.json();
+}
+function extractError(e) {
+  try { const p = JSON.parse(e.message); return p.detail || e.message; } catch { return e.message; }
+}
+
+// ===== Dashboard =====
+async function loadDashboard() {
+  loadStats();
+  loadLeaderboard();
+  loadRecentActivity();
 }
 
 async function loadStats() {
   try {
-    const data = await api('/knowledge/stats/summary');
-    document.getElementById('stat-total').textContent = data.total;
+    const data = await apiFetch('/knowledge/stats/summary');
+    document.getElementById('stat-total').textContent = data.total ?? '-';
     const catEl = document.getElementById('cat-stats');
     catEl.innerHTML = '';
-    for (const [cat, count] of Object.entries(data.by_category)) {
+    const max = Math.max(...Object.values(data.by_category || {}), 1);
+    for (const [cat, count] of Object.entries(data.by_category || {})) {
       catEl.innerHTML += `<div style="display:flex;align-items:center;gap:.75rem;">
-        <span style="flex:1;font-size:.875rem;">${CAT_LABELS[cat] || cat}</span>
-        <div style="background:#dbeafe;height:20px;border-radius:4px;width:${Math.min(count * 20, 300)}px;"></div>
-        <span style="font-weight:600;font-size:.875rem;">${count}</span>
+        <span style="flex:1;font-size:.84rem;">${CAT_LABELS[cat] || cat}</span>
+        <div style="background:var(--primary-light);height:18px;border-radius:4px;width:${Math.round((count/max)*180)}px;min-width:4px;"></div>
+        <span style="font-weight:700;font-size:.84rem;">${count}</span>
       </div>`;
     }
   } catch(e) { console.error(e); }
+
+  // Users count
+  try {
+    const users = await apiFetch('/users/list');
+    document.getElementById('stat-users').textContent = users.length;
+  } catch(e) {}
+
+  // Transcripts count
+  try {
+    const tr = await apiFetch('/audio/transcripts?limit=1000');
+    document.getElementById('stat-transcripts').textContent = tr.length;
+  } catch(e) {}
 }
 
-// --- インタビュー ---
+async function loadLeaderboard() {
+  try {
+    const users = await apiFetch('/users/list');
+    const sorted = [...users].sort((a,b) => b.knowledge_count - a.knowledge_count);
+    const el = document.getElementById('leaderboard');
+    if (!sorted.length) { el.innerHTML = '<p style="color:var(--text-muted);font-size:.875rem;">ユーザーがいません</p>'; return; }
+    el.innerHTML = sorted.slice(0,8).map((u,i) => `
+      <div class="leaderboard-item">
+        <div class="rank rank-${i+1}">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</div>
+        <div class="lb-avatar" style="background:${u.color}">${(u.display_name||u.name).charAt(0).toUpperCase()}</div>
+        <div class="lb-name">${u.display_name}</div>
+        <div class="lb-count">${u.knowledge_count}件</div>
+        ${u.transcript_count > 0 ? `<div class="lb-badge">🎤 ${u.transcript_count}</div>` : ''}
+      </div>`).join('');
+  } catch(e) { console.error(e); }
+}
+
+async function loadRecentActivity() {
+  try {
+    const items = await apiFetch('/knowledge/list?limit=5');
+    const el = document.getElementById('activity-feed');
+    if (!items.length) return;
+    el.innerHTML = items.map(item => `
+      <div class="activity-item">
+        <div class="activity-icon">📚</div>
+        <div class="activity-text">
+          <strong>${item.title}</strong><br>
+          <span style="font-size:.78rem;color:var(--text-muted);">${CAT_LABELS[item.category]||item.category}</span>
+        </div>
+        <div class="activity-time">${formatDate(item.created_at)}</div>
+      </div>`).join('');
+  } catch(e) {}
+}
+
+function formatDate(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  const now = new Date();
+  const diff = Math.floor((now - d) / 1000);
+  if (diff < 60) return '今';
+  if (diff < 3600) return Math.floor(diff/60) + '分前';
+  if (diff < 86400) return Math.floor(diff/3600) + '時間前';
+  return `${d.getMonth()+1}/${d.getDate()}`;
+}
+
+// ===== Interview =====
 async function startInterview() {
   const name = document.getElementById('interviewee-name').value.trim();
   if (!name) return alert('担当者名を入力してください');
   const topic = document.getElementById('interview-topic').value.trim();
   try {
-    const data = await api('/interview/start', {
+    const data = await apiFetch('/interview/start', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ interviewee_name: name, topic: topic || null }),
+      body: JSON.stringify({ interviewee_name: name, topic: topic || null, user_id: currentUser?.id || null }),
     });
     currentSessionId = data.session_id;
     document.getElementById('interview-start-card').style.display = 'none';
@@ -311,17 +878,22 @@ async function startInterview() {
     document.getElementById('interview-title').textContent = `インタビュー: ${name}`;
     const chat = document.getElementById('chat-area');
     chat.innerHTML = '';
-    addMessage('ai', data.greeting);
-  } catch(e) { alert('エラー: ' + e.message); }
+    addMessage('ai', data.greeting, true);
+  } catch(e) { alert('エラー: ' + extractError(e)); }
 }
 
-function addMessage(role, text) {
+function addMessage(role, text, autoSpeak = false) {
   const chat = document.getElementById('chat-area');
   const div = document.createElement('div');
   div.className = `msg ${role}`;
   div.textContent = text;
   chat.appendChild(div);
   chat.scrollTop = chat.scrollHeight;
+  if (autoSpeak && role === 'ai') {
+    speak(text);
+    div.classList.add('speaking');
+    setTimeout(() => div.classList.remove('speaking'), 5000);
+  }
 }
 
 async function sendMessage() {
@@ -331,38 +903,223 @@ async function sendMessage() {
   input.value = '';
   addMessage('user', text);
   try {
-    const data = await api('/interview/message', {
+    const data = await apiFetch('/interview/message', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ session_id: currentSessionId, message: text }),
     });
-    addMessage('ai', data.reply);
-  } catch(e) { alert('エラー: ' + e.message); }
+    addMessage('ai', data.reply, true);
+  } catch(e) { alert('エラー: ' + extractError(e)); }
 }
 
 async function finalizeInterview() {
   if (!currentSessionId) return;
   const btn = event.target;
   btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>形式知化中...';
+  btn.innerHTML = '<span class="spinner"></span> 形式知化中...';
   try {
-    const data = await api(`/interview/finalize/${currentSessionId}`, { method: 'POST' });
+    const data = await apiFetch(`/interview/finalize/${currentSessionId}`, { method: 'POST' });
     document.getElementById('finalize-result').innerHTML =
-      `<div class="alert alert-success">${data.extracted_count}件の知見を形式知化・登録しました！</div>`;
+      `<div class="alert alert-success">✅ ${data.extracted_count}件の知見を形式知化・登録しました！</div>`;
     currentSessionId = null;
     setTimeout(() => {
       document.getElementById('interview-start-card').style.display = 'block';
       document.getElementById('interview-chat-card').style.display = 'none';
+      document.getElementById('finalize-result').innerHTML = '';
     }, 3000);
   } catch(e) {
-    document.getElementById('finalize-result').innerHTML = `<div class="alert alert-error">${e.message}</div>`;
+    document.getElementById('finalize-result').innerHTML = `<div class="alert alert-error">${extractError(e)}</div>`;
   } finally {
     btn.disabled = false;
     btn.innerHTML = '完了・形式知化';
   }
 }
 
-// --- 取込 ---
+// ===== Speech Input (SpeechRecognition) =====
+function toggleSpeechInput() {
+  if (!SpeechRecognition) { alert('このブラウザは音声認識に対応していません'); return; }
+  if (isListening) {
+    recognition.stop();
+  } else {
+    recognition = new SpeechRecognition();
+    recognition.lang = 'ja-JP';
+    recognition.interimResults = false;
+    recognition.continuous = false;
+    recognition.onresult = (e) => {
+      const transcript = e.results[0][0].transcript;
+      const input = document.getElementById('chat-input');
+      input.value = transcript;
+      sendMessage();
+    };
+    recognition.onend = () => {
+      isListening = false;
+      const btn = document.getElementById('mic-btn');
+      if (btn) { btn.classList.remove('listening'); btn.textContent = '🎤'; }
+    };
+    recognition.onerror = (e) => {
+      isListening = false;
+      const btn = document.getElementById('mic-btn');
+      if (btn) { btn.classList.remove('listening'); btn.textContent = '🎤'; }
+    };
+    recognition.start();
+    isListening = true;
+    const btn = document.getElementById('mic-btn');
+    if (btn) { btn.classList.add('listening'); btn.textContent = '⏹'; }
+  }
+}
+
+// ===== High-Quality Recording (MediaRecorder + Whisper) =====
+async function toggleHighQualityRec() {
+  if (isHQRecording) {
+    if (mediaRecorder) mediaRecorder.stop();
+  } else {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorder = new MediaRecorder(stream);
+      audioChunks = [];
+      mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
+      mediaRecorder.onstop = async () => {
+        isHQRecording = false;
+        const btn = document.getElementById('hq-rec-btn');
+        if (btn) { btn.textContent = '🎙 高精度録音'; btn.classList.remove('btn-danger'); }
+        document.getElementById('rec-indicator').classList.remove('active');
+        stream.getTracks().forEach(t => t.stop());
+        const blob = new Blob(audioChunks, { type: 'audio/webm' });
+        document.getElementById('rec-label').textContent = '文字起こし中...';
+        document.getElementById('rec-indicator').classList.add('active');
+        try {
+          const form = new FormData();
+          form.append('file', blob, 'recording.webm');
+          if (currentUser) form.append('user_id', currentUser.id);
+          form.append('extract_knowledge', 'false');
+          const res = await fetch(`${API}/api/audio/transcribe`, { method: 'POST', body: form });
+          const data = await res.json();
+          if (data.transcript) {
+            const input = document.getElementById('chat-input');
+            input.value = data.transcript;
+          }
+        } catch(e) { console.error(e); }
+        document.getElementById('rec-indicator').classList.remove('active');
+      };
+      mediaRecorder.start();
+      isHQRecording = true;
+      const btn = document.getElementById('hq-rec-btn');
+      if (btn) { btn.textContent = '⏹ 停止'; btn.classList.add('btn-danger'); }
+      document.getElementById('rec-indicator').classList.add('active');
+      document.getElementById('rec-label').textContent = '録音中...';
+    } catch(e) { alert('マイクへのアクセスが拒否されました: ' + e.message); }
+  }
+}
+
+// ===== Ingest Tabs =====
+function switchIngestTab(tab, btn) {
+  document.querySelectorAll('#sec-ingest .tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('#sec-ingest .tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(`tab-${tab}`).classList.add('active');
+  if (btn) btn.classList.add('active');
+}
+
+// ===== Audio File Upload =====
+let selectedAudioFile = null;
+function handleAudioFileSelect(input) {
+  if (input.files[0]) setAudioFile(input.files[0]);
+}
+function setAudioFile(file) {
+  selectedAudioFile = file;
+  const info = document.getElementById('audio-file-info');
+  info.style.display = 'block';
+  info.textContent = `選択: ${file.name} (${(file.size/1024/1024).toFixed(2)} MB)`;
+  document.getElementById('audio-upload-btn').disabled = false;
+}
+
+async function uploadAudioFile() {
+  if (!selectedAudioFile) return;
+  const btn = document.getElementById('audio-upload-btn');
+  const resultEl = document.getElementById('audio-result');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> 処理中...';
+  resultEl.innerHTML = '<div class="alert alert-info">Whisperで文字起こし中...</div>';
+  try {
+    const form = new FormData();
+    form.append('file', selectedAudioFile);
+    if (currentUser) form.append('user_id', currentUser.id);
+    form.append('extract_knowledge', document.getElementById('audio-extract-knowledge').checked ? 'true' : 'false');
+    const res = await fetch(`${API}/api/audio/transcribe`, { method: 'POST', body: form });
+    if (!res.ok) throw new Error(await res.text());
+    const data = await res.json();
+    resultEl.innerHTML = `
+      <div class="alert alert-success">✅ 文字起こし完了！ナレッジ ${data.extracted_knowledge_count} 件抽出</div>
+      <div class="card" style="margin-top:.75rem;">
+        <h2 style="font-size:.9rem;">文字起こし結果</h2>
+        <div style="white-space:pre-wrap;font-size:.85rem;line-height:1.6;max-height:300px;overflow-y:auto;">${escHtml(data.transcript)}</div>
+      </div>`;
+    loadStats();
+  } catch(e) {
+    resultEl.innerHTML = `<div class="alert alert-error">エラー: ${extractError(e)}</div>`;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '文字起こし・抽出';
+  }
+}
+
+// ===== Live Recording =====
+async function toggleLiveRecording() {
+  const btn = document.getElementById('live-rec-btn');
+  const indicator = document.getElementById('live-rec-indicator');
+  if (isLiveRecording) {
+    if (liveMediaRecorder) liveMediaRecorder.stop();
+  } else {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      liveMediaRecorder = new MediaRecorder(stream);
+      liveAudioChunks = [];
+      liveRecSeconds = 0;
+      liveMediaRecorder.ondataavailable = e => { if (e.data.size > 0) liveAudioChunks.push(e.data); };
+      liveMediaRecorder.onstop = async () => {
+        isLiveRecording = false;
+        clearInterval(liveRecTimer);
+        btn.textContent = '● 録音開始';
+        btn.classList.remove('btn-danger');
+        indicator.classList.remove('active');
+        stream.getTracks().forEach(t => t.stop());
+        const blob = new Blob(liveAudioChunks, { type: 'audio/webm' });
+        const resultEl = document.getElementById('live-rec-result');
+        resultEl.innerHTML = '<div class="alert alert-info">Whisperで文字起こし中...</div>';
+        try {
+          const form = new FormData();
+          form.append('file', blob, 'live_recording.webm');
+          if (currentUser) form.append('user_id', currentUser.id);
+          form.append('extract_knowledge', 'true');
+          const res = await fetch(`${API}/api/audio/transcribe`, { method: 'POST', body: form });
+          if (!res.ok) throw new Error(await res.text());
+          const data = await res.json();
+          resultEl.innerHTML = `
+            <div class="alert alert-success">✅ 完了！ナレッジ ${data.extracted_knowledge_count} 件抽出</div>
+            <div class="card" style="margin-top:.75rem;">
+              <h2 style="font-size:.9rem;">文字起こし</h2>
+              <div style="white-space:pre-wrap;font-size:.85rem;line-height:1.6;max-height:250px;overflow-y:auto;">${escHtml(data.transcript)}</div>
+            </div>`;
+          loadStats();
+        } catch(e) {
+          resultEl.innerHTML = `<div class="alert alert-error">エラー: ${extractError(e)}</div>`;
+        }
+      };
+      liveMediaRecorder.start();
+      isLiveRecording = true;
+      btn.textContent = '⏹ 録音停止';
+      btn.classList.add('btn-danger');
+      indicator.classList.add('active');
+      liveRecTimer = setInterval(() => {
+        liveRecSeconds++;
+        const m = Math.floor(liveRecSeconds / 60);
+        const s = liveRecSeconds % 60;
+        document.getElementById('live-rec-time').textContent = `${m}:${s.toString().padStart(2,'0')}`;
+      }, 1000);
+    } catch(e) { alert('マイクへのアクセスが拒否されました: ' + e.message); }
+  }
+}
+
+// ===== Document Upload =====
 async function uploadDocument() {
   const file = document.getElementById('upload-file').files[0];
   if (!file) return alert('ファイルを選択してください');
@@ -370,22 +1127,25 @@ async function uploadDocument() {
   const form = new FormData();
   form.append('file', file);
   form.append('source_hint', hint);
+  if (currentUser) form.append('user_id', currentUser.id);
   const btn = event.target;
   btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>処理中...';
+  btn.innerHTML = '<span class="spinner"></span> 処理中...';
   try {
     const res = await fetch(`${API}/api/ingest/document`, { method: 'POST', body: form });
     const data = await res.json();
     document.getElementById('upload-result').innerHTML =
-      `<div class="alert alert-success">${data.extracted_count}件のナレッジを抽出・登録しました</div>`;
+      `<div class="alert alert-success">✅ ${data.extracted_count}件のナレッジを抽出・登録しました</div>`;
+    loadStats();
   } catch(e) {
-    document.getElementById('upload-result').innerHTML = `<div class="alert alert-error">${e.message}</div>`;
+    document.getElementById('upload-result').innerHTML = `<div class="alert alert-error">${extractError(e)}</div>`;
   } finally {
     btn.disabled = false;
     btn.textContent = 'アップロード・抽出';
   }
 }
 
+// ===== Text Ingest =====
 async function ingestText() {
   const text = document.getElementById('ingest-text').value.trim();
   if (!text) return alert('テキストを入力してください');
@@ -393,40 +1153,59 @@ async function ingestText() {
   form.append('text', text);
   form.append('source_type', document.getElementById('text-source-type').value);
   form.append('source_name', document.getElementById('text-source-name').value || '手動入力');
+  if (currentUser) form.append('user_id', currentUser.id);
   const btn = event.target;
   btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>処理中...';
+  btn.innerHTML = '<span class="spinner"></span> 処理中...';
   try {
     const res = await fetch(`${API}/api/ingest/text`, { method: 'POST', body: form });
     const data = await res.json();
     document.getElementById('text-result').innerHTML =
-      `<div class="alert alert-success">${data.extracted_count}件のナレッジを抽出・登録しました</div>`;
+      `<div class="alert alert-success">✅ ${data.extracted_count}件のナレッジを抽出・登録しました</div>`;
+    loadStats();
   } catch(e) {
-    document.getElementById('text-result').innerHTML = `<div class="alert alert-error">${e.message}</div>`;
+    document.getElementById('text-result').innerHTML = `<div class="alert alert-error">${extractError(e)}</div>`;
   } finally {
     btn.disabled = false;
     btn.textContent = 'ナレッジを抽出・登録';
   }
 }
 
-// --- ナレッジ一覧・検索 ---
-function renderKnowledgeCards(items, container) {
+// ===== Knowledge Search & List =====
+function renderKnowledgeCards(items, container, showActions = false) {
   container.innerHTML = '';
   if (!items.length) { container.innerHTML = '<p style="color:var(--text-muted);font-size:.875rem;">結果なし</p>'; return; }
   items.forEach(item => {
+    const id = item.id || item.metadata?.db_id;
     const content = item.content || item.metadata?.content || '';
     const title = item.title || item.metadata?.title || '';
     const category = item.category || item.metadata?.category || '';
     const tags = Array.isArray(item.tags) ? item.tags : [];
+    const enrichedBadge = item.enriched_at ? '<span class="enriched-badge">✨ 深化済</span>' : '';
+    const supportBadge = (item.support_count > 1) ? `<span class="tag">👍 ${item.support_count}</span>` : '';
+
+    const actionsHtml = showActions && id ? `
+      <div class="card-actions">
+        <button class="btn btn-ghost btn-sm" onclick="openEditModal(${id}, ${escAttr(title)}, ${escAttr(content)})">✏️ 編集</button>
+        <button class="btn btn-ghost btn-sm" onclick="enrichItem(${id}, this)">✨ 深化</button>
+        <button class="btn btn-success btn-sm" onclick="sendFeedback(${id}, true, this)">👍 役立つ</button>
+        <button class="btn btn-ghost btn-sm" onclick="sendFeedback(${id}, false, this)">👎</button>
+        ${enrichedBadge}
+      </div>` : '';
+
     container.innerHTML += `
       <div class="knowledge-card">
         <span class="cat">${CAT_LABELS[category] || category}</span>
-        <h3>${title}</h3>
-        <p>${content.length > 200 ? content.slice(0, 200) + '...' : content}</p>
-        ${tags.length ? `<div class="tags">${tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>` : ''}
+        <h3>${escHtml(title)}</h3>
+        <p>${escHtml(content.length > 220 ? content.slice(0, 220) + '...' : content)}</p>
+        ${tags.length || supportBadge ? `<div class="tags">${tags.map(t => `<span class="tag">${escHtml(t)}</span>`).join('')}${supportBadge}</div>` : ''}
+        ${actionsHtml}
       </div>`;
   });
 }
+
+function escHtml(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+function escAttr(s) { return JSON.stringify(String(s || '')); }
 
 async function searchKnowledge() {
   const q = document.getElementById('search-query').value.trim();
@@ -435,7 +1214,7 @@ async function searchKnowledge() {
   try {
     const params = new URLSearchParams({ q, n: 10 });
     if (cat) params.append('category', cat);
-    const results = await api(`/knowledge/search?${params}`);
+    const results = await apiFetch(`/knowledge/search?${params}`);
     const normalized = results.map(r => ({
       title: r.metadata?.title || '',
       content: r.content,
@@ -443,36 +1222,36 @@ async function searchKnowledge() {
       tags: [],
     }));
     renderKnowledgeCards(normalized, document.getElementById('search-results'));
-  } catch(e) { alert(e.message); }
+  } catch(e) { alert(extractError(e)); }
 }
 
 async function loadKnowledgeList() {
   try {
-    const items = await api('/knowledge/list?limit=50');
+    const items = await apiFetch('/knowledge/list?limit=50');
     renderKnowledgeCards(items, document.getElementById('knowledge-list'));
   } catch(e) { console.error(e); }
 }
 
-// --- プレイブック ---
+// ===== Playbook =====
 async function generatePlaybook() {
   const scenario = document.getElementById('pb-scenario').value.trim();
   if (!scenario) return alert('シナリオを入力してください');
   const title = document.getElementById('pb-title').value.trim();
   const btn = event.target;
   btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>生成中...';
+  btn.innerHTML = '<span class="spinner"></span> 生成中...';
   const resultEl = document.getElementById('pb-result');
   resultEl.innerHTML = '';
   try {
-    const data = await api('/playbook/generate', {
+    const data = await apiFetch('/playbook/generate', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ scenario, title: title || null }),
     });
-    resultEl.innerHTML = `<div class="card"><h2>${data.title}</h2><div class="playbook-content">${data.content}</div></div>`;
+    resultEl.innerHTML = `<div class="card"><h2>${escHtml(data.title)}</h2><div class="playbook-content">${escHtml(data.content)}</div></div>`;
     loadPlaybookList();
   } catch(e) {
-    resultEl.innerHTML = `<div class="alert alert-error">${e.message}</div>`;
+    resultEl.innerHTML = `<div class="alert alert-error">${extractError(e)}</div>`;
   } finally {
     btn.disabled = false;
     btn.textContent = 'プレイブックを生成';
@@ -481,50 +1260,187 @@ async function generatePlaybook() {
 
 async function loadPlaybookList() {
   try {
-    const items = await api('/playbook/list');
+    const items = await apiFetch('/playbook/list');
     const el = document.getElementById('pb-list');
     if (!items.length) { el.innerHTML = '<p style="color:var(--text-muted);font-size:.875rem;">まだプレイブックがありません</p>'; return; }
     el.innerHTML = items.map(p => `
       <div style="border-bottom:1px solid var(--border);padding:.75rem 0;cursor:pointer;" onclick="loadPlaybook(${p.id})">
-        <div style="font-weight:600;font-size:.9rem;">${p.title}</div>
-        <div style="font-size:.8rem;color:var(--text-muted);">${p.scenario.slice(0, 80)}...</div>
+        <div style="font-weight:600;font-size:.9rem;">${escHtml(p.title)}</div>
+        <div style="font-size:.8rem;color:var(--text-muted);">${escHtml((p.scenario||'').slice(0,80))}...</div>
       </div>`).join('');
   } catch(e) { console.error(e); }
 }
 
 async function loadPlaybook(id) {
   try {
-    const data = await api(`/playbook/${id}`);
-    document.getElementById('pb-result').innerHTML = `<div class="card"><h2>${data.title}</h2><div class="playbook-content">${data.content}</div></div>`;
+    const data = await apiFetch(`/playbook/${id}`);
+    document.getElementById('pb-result').innerHTML = `<div class="card"><h2>${escHtml(data.title)}</h2><div class="playbook-content">${escHtml(data.content)}</div></div>`;
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  } catch(e) { alert(e.message); }
+  } catch(e) { alert(extractError(e)); }
 }
 
-// --- リアルタイムサポート ---
+// ===== Realtime Support =====
 async function getRealtimeSuggestion() {
   const situation = document.getElementById('rt-situation').value.trim();
   if (!situation) return alert('商談の状況を入力してください');
   const btn = event.target;
   btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>分析中...';
+  btn.innerHTML = '<span class="spinner"></span> 分析中...';
   const resultEl = document.getElementById('rt-result');
   resultEl.innerHTML = '';
   try {
-    const data = await api('/playbook/realtime', {
+    const data = await apiFetch('/playbook/realtime', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ situation }),
     });
-    resultEl.innerHTML = `<div class="card"><h2>アドバイス</h2><div class="playbook-content">${data.suggestion}</div></div>`;
+    resultEl.innerHTML = `<div class="card"><h2>アドバイス</h2><div class="playbook-content">${escHtml(data.suggestion)}</div></div>`;
+    speak(data.suggestion.slice(0, 500));
   } catch(e) {
-    resultEl.innerHTML = `<div class="alert alert-error">${e.message}</div>`;
+    resultEl.innerHTML = `<div class="alert alert-error">${extractError(e)}</div>`;
   } finally {
     btn.disabled = false;
     btn.textContent = 'アドバイスを取得';
   }
 }
 
-loadStats();
+// ===== Transcripts =====
+async function loadTranscriptUserFilter() {
+  try {
+    const users = await apiFetch('/users/list');
+    const sel = document.getElementById('transcript-filter-user');
+    sel.innerHTML = '<option value="">全ユーザー</option>';
+    users.forEach(u => {
+      sel.innerHTML += `<option value="${u.id}">${u.display_name}</option>`;
+    });
+  } catch(e) {}
+}
+
+async function loadTranscripts() {
+  const userId = document.getElementById('transcript-filter-user').value;
+  const params = new URLSearchParams({ limit: 50 });
+  if (userId) params.append('user_id', userId);
+  try {
+    const records = await apiFetch(`/audio/transcripts?${params}`);
+    const el = document.getElementById('transcript-list');
+    if (!records.length) { el.innerHTML = '<p style="color:var(--text-muted);font-size:.875rem;">発言録がありません</p>'; return; }
+    el.innerHTML = records.map(r => {
+      const sourceClass = r.source_type === 'file_upload' ? 'source-file' : r.source_type === 'browser_recording' ? 'source-browser' : 'source-interview';
+      const sourceLabel = r.source_type === 'file_upload' ? 'ファイル' : r.source_type === 'browser_recording' ? 'ブラウザ録音' : 'インタビュー';
+      return `<div class="transcript-item" onclick="this.classList.toggle('expanded')">
+        <div class="t-header">
+          <div class="t-title">${escHtml(r.filename || '無題の録音')}</div>
+          <span class="source-badge ${sourceClass}">${sourceLabel}</span>
+          <span class="t-meta">${formatDate(r.created_at)}</span>
+        </div>
+        <div class="t-preview">${escHtml((r.transcript || '').slice(0, 150))}${r.transcript?.length > 150 ? '...' : ''}</div>
+        <div class="t-full">${escHtml(r.transcript || '')}</div>
+      </div>`;
+    }).join('');
+  } catch(e) { console.error(e); }
+}
+
+// ===== Knowledge Management =====
+async function loadManageList() {
+  const cat = document.getElementById('manage-cat-filter').value;
+  const params = new URLSearchParams({ limit: 100 });
+  if (cat) params.append('category', cat);
+  try {
+    const items = await apiFetch(`/knowledge/list?${params}`);
+    renderKnowledgeCards(items, document.getElementById('manage-list'), true);
+  } catch(e) { console.error(e); }
+}
+
+function openEditModal(id, title, content) {
+  document.getElementById('edit-id').value = id;
+  document.getElementById('edit-title').value = title;
+  document.getElementById('edit-content').value = content;
+  document.getElementById('edit-modal').classList.remove('hidden');
+}
+
+function closeEditModal() {
+  document.getElementById('edit-modal').classList.add('hidden');
+}
+
+async function saveEdit() {
+  const id = document.getElementById('edit-id').value;
+  const title = document.getElementById('edit-title').value.trim();
+  const content = document.getElementById('edit-content').value.trim();
+  if (!title || !content) return alert('タイトルと内容を入力してください');
+  try {
+    await apiFetch(`/knowledge/${id}`, {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ title, content }),
+    });
+    closeEditModal();
+    loadManageList();
+  } catch(e) { alert('保存エラー: ' + extractError(e)); }
+}
+
+async function enrichItem(id, btn) {
+  const origText = btn.textContent;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner spinner-dark"></span>';
+  try {
+    await apiFetch(`/knowledge/${id}/enrich`, { method: 'POST' });
+    btn.textContent = '✅ 完了';
+    setTimeout(() => { btn.textContent = origText; btn.disabled = false; loadManageList(); }, 1500);
+  } catch(e) {
+    btn.textContent = origText;
+    btn.disabled = false;
+    alert('深化エラー: ' + extractError(e));
+  }
+}
+
+async function sendFeedback(id, helpful, btn) {
+  try {
+    const data = await apiFetch(`/knowledge/${id}/feedback`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ helpful, user_id: currentUser?.id || null }),
+    });
+    btn.textContent = helpful ? `👍 ${data.support_count}` : '👎';
+  } catch(e) { console.error(e); }
+}
+
+async function synthesizeCategory() {
+  const cat = document.getElementById('manage-cat-filter').value;
+  if (!cat) { alert('カテゴリを選択してください'); return; }
+  const btn = document.getElementById('synth-btn');
+  const resultEl = document.getElementById('manage-synth-result');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> 分析中...';
+  resultEl.innerHTML = '';
+  try {
+    const data = await apiFetch('/knowledge/synthesize', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ category: cat }),
+    });
+    resultEl.innerHTML = `<div class="card">
+      <h2>📊 ${CAT_LABELS[cat]||cat} — カテゴリ分析 (${data.item_count}件)</h2>
+      <div class="synthesis-result">${escHtml(data.synthesis)}</div>
+    </div>`;
+  } catch(e) {
+    resultEl.innerHTML = `<div class="alert alert-error">${extractError(e)}</div>`;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'カテゴリ分析';
+  }
+}
+
+// ===== Keyboard enter on login =====
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const overlay = document.getElementById('login-overlay');
+    if (!overlay.classList.contains('hidden')) {
+      const loginForm = document.getElementById('login-form');
+      if (loginForm.style.display !== 'none') doLogin();
+      else doRegister();
+    }
+  }
+});
 </script>
 </body>
 </html>
