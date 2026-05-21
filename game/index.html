@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>10秒クリックゲーム</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- タイトル -->
+    <h1 class="title">10秒クリックゲーム</h1>
+    <p class="subtitle">10秒間でできるだけ多くクリックしよう！</p>
+
+    <!-- スコア・タイマー表示エリア -->
+    <div class="info-area">
+      <div class="info-box">
+        <div class="info-label">のこり時間</div>
+        <div class="info-value" id="timer">10</div>
+        <div class="info-unit">秒</div>
+      </div>
+      <div class="info-box">
+        <div class="info-label">スコア</div>
+        <div class="info-value" id="score">0</div>
+        <div class="info-unit">クリック</div>
+      </div>
+      <div class="info-box best">
+        <div class="info-label">最高スコア</div>
+        <div class="info-value" id="best-score">0</div>
+        <div class="info-unit">クリック</div>
+      </div>
+    </div>
+
+    <!-- メインボタン（スタート / クリック） -->
+    <button class="main-btn" id="main-btn" onclick="handleButtonClick()">
+      スタート
+    </button>
+
+    <!-- ゲーム終了後のメッセージ -->
+    <div class="result-message" id="result-message"></div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
